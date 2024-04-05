@@ -31,6 +31,20 @@ app.post('/submit', async (req, res) => {
   }
 });
 
+app.get('/marks', async (req, res) => {
+  try {
+    const marks = await Marks.findOne(); // Assuming there's only one document with marks data
+    if (!marks) {
+      res.status(404).json({ message: 'Marks data not found' });
+      return;
+    }
+    res.status(200).json(marks); // Returning the marks data
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
