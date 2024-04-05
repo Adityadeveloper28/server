@@ -11,16 +11,18 @@ mongoose.connect('mongodb+srv://aditya:aditya123@cluster0.zoiqagj.mongodb.net/st
 });
 
 const marksSchema = new mongoose.Schema({
-  subject: String,
-  marks: Number,
+  MAD: Number,
+  COA: Number,
+  IP: Number,
+  WEBX: Number,
 });
 
 const Marks = mongoose.model('Marks', marksSchema);
 
 app.post('/submit', async (req, res) => {
-  const { subject, marks } = req.body;
+  const { MAD, COA, IP, WEBX } = req.body;
   try {
-    const newMarks = new Marks({ subject, marks });
+    const newMarks = new Marks({ MAD, COA, IP, WEBX });
     await newMarks.save();
     res.status(200).json({ message: 'Marks submitted successfully' });
   } catch (error) {
