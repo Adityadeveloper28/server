@@ -33,12 +33,12 @@ app.post('/submit', async (req, res) => {
 
 app.get('/marks', async (req, res) => {
   try {
-    const marks = await Marks.findOne(); // Assuming there's only one document with marks data
-    if (!marks) {
+    const marks = await Marks.find(); // Fetching all documents
+    if (!marks || marks.length === 0) {
       res.status(404).json({ message: 'Marks data not found' });
       return;
     }
-    res.status(200).json(marks); // Returning the marks data
+    res.status(200).json(marks); // Returning the marks data as an array
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
