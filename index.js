@@ -8,58 +8,49 @@ app.use(bodyParser.json());
 mongoose.connect('mongodb+srv://aditya:aditya123@cluster0.zoiqagj.mongodb.net/student_marks', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('MongoDB connected successfully');
+})
+.catch((error) => {
+  console.error('MongoDB connection error:', error);
 });
 
 const userSchema = new mongoose.Schema({
-  email: String,
-  password: String,
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
 });
 
 const User = mongoose.model('User', userSchema);
 
-// Define schema for marks
-const marksSchema = new mongoose.Schema({
-  MAD: Number,
-  COA: Number,
-  IP: Number,
-  WEBX: Number,
-});
-
-const Marks = mongoose.model('Marks', marksSchema);
-
-// Endpoint to handle signup requests
+// Endpoint to handle user registration
 app.post('/signup', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { email, password } = req.body;
   try {
-    // Here you would perform validation, password hashing, etc.
-    // For simplicity, let's assume the data is valid and save it directly to the database
-    const newUser = new User({ name, email, password });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+    const newUser = new User({ email, password });
     await newUser.save();
-    res.status(200).json({ message: 'User signed up successfully' });
+    res.status(200).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// Endpoint to handle login requests
+// Endpoint to handle user login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      // User not found
-      res.status(404).json({ message: 'User not found' });
-      return;
+      return res.status(404).json({ message: 'User not found' });
     }
-    // Check if password matches
     if (user.password !== password) {
-      // Password does not match
-      res.status(401).json({ message: 'Incorrect password' });
-      return;
+      return res.status(401).json({ message: 'Incorrect password' });
     }
-    // Login successful
     res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     console.error(error);
@@ -67,36 +58,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Endpoint to submit marks
-app.post('/submit', async (req, res) => {
-  const { MAD, COA, IP, WEBX } = req.body;
-  try {
-    // Save marks to the database
-    const newMarks = new Marks({ MAD, COA, IP, WEBX });
-    await newMarks.save();
-    res.status(200).json({ message: 'Marks submitted successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Endpoint to fetch marks
-app.get('/marks', async (req, res) => {
-  try {
-    // Fetch all marks from the database
-    const marks = await Marks.find();
-    if (!marks || marks.length === 0) {
-      res.status(404).json({ message: 'Marks data not found' });
-      return;
-    }
-    res.status(200).json(marks);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
