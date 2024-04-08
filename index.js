@@ -17,6 +17,16 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Define schema for marks
+const marksSchema = new mongoose.Schema({
+  MAD: Number,
+  COA: Number,
+  IP: Number,
+  WEBX: Number,
+});
+
+const Marks = mongoose.model('Marks', marksSchema);
+
 // Endpoint to handle signup requests
 app.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
