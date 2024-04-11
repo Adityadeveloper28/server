@@ -42,6 +42,7 @@ app.post('/signup', async (req, res) => {
 });
 
 // Endpoint to handle user login
+// Endpoint to handle user login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -52,12 +53,14 @@ app.post('/login', async (req, res) => {
     if (user.password !== password) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
-    res.status(200).json({ message: 'Login successful', name: user.name }); // Include user's name in the response
+    // Send the user's name along with the response
+    res.status(200).json({ message: 'Login successful', name: user.name });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
