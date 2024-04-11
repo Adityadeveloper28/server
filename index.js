@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -24,6 +25,21 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Endpoint to fetch user data by email
+app.get('/user/:email', async (req, res) => {
+  const email = req.params.email;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Endpoint to handle user registration
 app.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
@@ -41,9 +57,6 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-// Endpoint to handle user login
-// Endpoint to handle user login
-// Endpoint to handle user login
 // Endpoint to handle user login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -64,8 +77,6 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
