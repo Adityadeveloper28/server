@@ -44,6 +44,7 @@ app.post('/signup', async (req, res) => {
 // Endpoint to handle user login
 // Endpoint to handle user login
 // Endpoint to handle user login
+// Endpoint to handle user login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -54,6 +55,8 @@ app.post('/login', async (req, res) => {
     if (user.password !== password) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
+    // Log the retrieved user object
+    console.log('Retrieved user:', user);
     // If login is successful, return the user's name along with the success message
     res.status(200).json({ message: 'Login successful', name: user.name });
   } catch (error) {
