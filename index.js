@@ -17,6 +17,7 @@ mongoose.connect('mongodb+srv://aditya:aditya123@cluster0.zoiqagj.mongodb.net/st
 });
 
 const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 });
@@ -25,13 +26,13 @@ const User = mongoose.model('User', userSchema);
 
 // Endpoint to handle user registration
 app.post('/signup', async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already exists' });
     }
-    const newUser = new User({ email, password });
+    const newUser = new User({ name, email, password });
     await newUser.save();
     res.status(200).json({ message: 'User registered successfully' });
   } catch (error) {
