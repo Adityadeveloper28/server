@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: String, // Assuming role is stored as a string
 });
 
 const User = mongoose.model('User', userSchema);
@@ -75,6 +76,20 @@ app.post('/login', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/admin/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email, password, role: '1' });
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(401).json({ error: 'Invalid credentials or insufficient permissions' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
